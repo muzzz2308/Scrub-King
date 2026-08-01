@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--foreground);
+
+    background-image:
+      radial-gradient(
+        color-mix(in oklab, var(--ink) 7%, transparent) 2px,
+        transparent 2px
+      ),
+      var(--gradient-sky);
+
+    background-size:
+      24px 24px,
+      auto;
+  }
+}
+
+@utility bg-gradient-sun {
+  background-image: var(--gradient-sun);
+}
+
+@utility bg-gradient-bubble {
+  background-image: var(--gradient-bubble);
+}
+
+@utility shadow-pop {
+  box-shadow: var(--shadow-pop);
+}
+
+@utility shadow-pop-sm {
+  box-shadow: var(--shadow-pop-sm);
+}
+
+@utility shadow-float {
+  box-shadow: var(--shadow-float);
+}
+
+@utility animate-bob {
+  animation: bob 4s ease-in-out infinite;
+}
+
+@utility animate-spin-slow {
+  animation: spin 22s linear infinite;
+}
+
+@utility animate-wiggle {
+  animation: wiggle 0.6s ease-in-out infinite;
+}
+
+@utility hover-wiggle {
+  transition: transform 0.2s ease;
+
+  &:hover {
+    animation: wiggle 0.5s ease-in-out infinite;
+  }
+}
+
+@utility press-pop {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 0 0 var(--ink);
+  }
+
+  &:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 0 var(--ink);
+  }
+}
+
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--ink) 14%, transparent) 2px,
+    transparent 2px
+  );
+
+  background-size: 22px 22px;
+}
+
+@utility bg-confetti {
+  background-image:
+    radial-gradient(
+      circle at 12% 22%,
+      color-mix(in oklab, var(--bubble) 55%, transparent) 6px,
+      transparent 7px
+    ),
+    radial-gradient(
+      circle at 78% 12%,
+      color-mix(in oklab, var(--sunny) 70%, transparent) 8px,
+      transparent 9px
+    ),
+    radial-gradient(
+      circle at 62% 78%,
+      color-mix(in oklab, var(--splash) 50%, transparent) 5px,
+      transparent 6px
+    ),
+    radial-gradient(
+      circle at 30% 88%,
+      color-mix(in oklab, var(--primary) 45%, transparent) 7px,
+      transparent 8px
+    );
+
+  background-size: 260px 260px;
+}
+
+@utility animate-marquee {
+  animation: marquee 22s linear infinite;
+}
+
+@utility text-outline-ink {
+  -webkit-text-stroke: 3px var(--ink);
+  paint-order: stroke fill;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(2deg);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg) scale(1.03);
+  }
+
+  50% {
+    transform: rotate(3deg) scale(1.03);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@theme inline {
+  --font-display: "Baloo 2", "Trebuchet MS", cursive;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sunny: var(--sunny);
+  --color-sunny-foreground: var(--sunny-foreground);
+
+  --color-bubble: var(--bubble);
+  --color-bubble-foreground: var(--bubble-foreground);
+
+  --color-splash: var(--splash);
+  --color-splash-foreground: var(--splash-foreground);
+
+  --color-ink: var(--ink);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+:root {
+  --radius: 1.5rem;
+  --background: oklch(0.985 0.02 95);
+  --foreground: oklch(0.28 0.09 265);
+  --card: oklch(1 0 0);
+
+  --card-foreground: oklch(0.28 0.09 265);
+  --popover: oklch(1 0 0);
+
+  --popover-foreground: oklch(0.28 0.09 265);
+  --primary: oklch(0.72 0.19 45);
+  --primary-foreground: oklch(0.99 0.01 95);
+  --secondary: oklch(0.94 0.05 95);
+  --secondary-foreground: oklch(0.32 0.09 265);
+  --muted: oklch(0.955 0.02 95);
+  --muted-foreground: oklch(0.52 0.05 265);
+  --accent: oklch(0.7 0.23 350);
+  --accent-foreground: oklch(0.99 0.01 350);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+
+  --border: oklch(0.9 0.04 90);
+  --input: oklch(0.9 0.04 90);
+  --ring: oklch(0.72 0.19 45);
+
+  --sunny: oklch(0.88 0.18 96);
+  --sunny-foreground: oklch(0.3 0.09 265);
+  --bubble: oklch(0.7 0.23 350);
+  --bubble-foreground: oklch(0.99 0.01 350);
+  --splash: oklch(0.72 0.15 225);
+  --splash-foreground: oklch(0.99 0.01 225);
+  --ink: oklch(0.28 0.09 265);
+
+  --gradient-sun: linear-gradient(135deg, var(--sunny), var(--primary));
+  --gradient-bubble: linear-gradient(135deg, var(--bubble), var(--primary));
+  --gradient-sky: linear-gradient(
+    180deg,
+    oklch(0.97 0.04 96),
+    oklch(0.99 0.01 95)
+  );
+  --shadow-pop: 0 4px 0 0 var(--ink);
+  --shadow-pop-sm: 0 5px 0 0 var(--ink);
+  --shadow-float: 0 24px 50px -20px
+    color-mix(in oklab, var(--ink) 45%, transparent);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+}
