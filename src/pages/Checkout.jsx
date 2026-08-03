@@ -207,7 +207,7 @@ export default function CheckoutPage() {
           </button>
           <button
             type="button"
-            onClick={() => navigate({ to: "/cart" })}
+            onClick={() => navigate("/cart")}
             className="mt-3 w-full text-sm font-bold text-muted-foreground underline hover:text-foreground"
           >
             Back to bag

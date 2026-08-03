@@ -8,7 +8,7 @@
 
     background-image:
       radial-gradient(
-        color-mix(in oklab, var(--ink) 7%, transparent) 2px,
+        rgba(39, 54, 95, 0.07) 2px,
         transparent 2px
       ),
       var(--gradient-sky);
@@ -77,7 +77,7 @@
 
 @utility bg-dots {
   background-image: radial-gradient(
-    color-mix(in oklab, var(--ink) 14%, transparent) 2px,
+    rgba(22, 34, 68, 0.18) 2px,
     transparent 2px
   );
 
@@ -88,22 +88,22 @@
   background-image:
     radial-gradient(
       circle at 12% 22%,
-      color-mix(in oklab, var(--bubble) 55%, transparent) 6px,
+      rgba(212, 55, 122, 0.60) 6px,
       transparent 7px
     ),
     radial-gradient(
       circle at 78% 12%,
-      color-mix(in oklab, var(--sunny) 70%, transparent) 8px,
+      rgba(238, 201, 63, 0.75) 8px,
       transparent 9px
     ),
     radial-gradient(
       circle at 62% 78%,
-      color-mix(in oklab, var(--splash) 50%, transparent) 5px,
+      rgba(56, 146, 214, 0.55) 5px,
       transparent 6px
     ),
     radial-gradient(
       circle at 30% 88%,
-      color-mix(in oklab, var(--primary) 45%, transparent) 7px,
+      rgba(222, 143, 33, 0.55) 7px,
       transparent 8px
     );
 
@@ -199,51 +199,58 @@
 }
 
 :root {
-  --radius: 1.5rem;
-  --background: oklch(0.985 0.02 95);
-  --foreground: oklch(0.28 0.09 265);
-  --card: oklch(1 0 0);
+  --background: rgb(238, 232, 214);
+  --foreground: rgb(22, 34, 68);
 
-  --card-foreground: oklch(0.28 0.09 265);
-  --popover: oklch(1 0 0);
+  --card: rgb(247, 243, 232);
+  --card-foreground: rgb(22, 34, 68);
 
-  --popover-foreground: oklch(0.28 0.09 265);
-  --primary: oklch(0.72 0.19 45);
-  --primary-foreground: oklch(0.99 0.01 95);
-  --secondary: oklch(0.94 0.05 95);
-  --secondary-foreground: oklch(0.32 0.09 265);
-  --muted: oklch(0.955 0.02 95);
-  --muted-foreground: oklch(0.52 0.05 265);
-  --accent: oklch(0.7 0.23 350);
-  --accent-foreground: oklch(0.99 0.01 350);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --popover: rgb(247, 243, 232);
+  --popover-foreground: rgb(22, 34, 68);
 
-  --border: oklch(0.9 0.04 90);
-  --input: oklch(0.9 0.04 90);
-  --ring: oklch(0.72 0.19 45);
+  --primary: rgb(222, 143, 33);
+  --primary-foreground: rgb(255, 255, 250);
 
-  --sunny: oklch(0.88 0.18 96);
-  --sunny-foreground: oklch(0.3 0.09 265);
-  --bubble: oklch(0.7 0.23 350);
-  --bubble-foreground: oklch(0.99 0.01 350);
-  --splash: oklch(0.72 0.15 225);
-  --splash-foreground: oklch(0.99 0.01 225);
-  --ink: oklch(0.28 0.09 265);
+  --secondary: rgb(224, 215, 191);
+  --secondary-foreground: rgb(30, 45, 78);
+
+  --muted: rgb(226, 220, 202);
+  --muted-foreground: rgb(78, 88, 116);
+
+  --accent: rgb(212, 55, 122);
+  --accent-foreground: rgb(255, 249, 252);
+
+  --destructive: rgb(192, 48, 48);
+  --destructive-foreground: rgb(248, 249, 252);
+
+  --border: rgb(198, 188, 162);
+  --input: rgb(198, 188, 162);
+  --ring: rgb(222, 143, 33);
+
+  --sunny: rgb(238, 201, 63);
+  --sunny-foreground: rgb(22, 34, 68);
+
+  --bubble: rgb(212, 55, 122);
+  --bubble-foreground: rgb(255, 249, 252);
+
+  --splash: rgb(56, 146, 214);
+  --splash-foreground: rgb(255, 255, 255);
+
+  --ink: rgb(22, 34, 68);
 
   --gradient-sun: linear-gradient(135deg, var(--sunny), var(--primary));
   --gradient-bubble: linear-gradient(135deg, var(--bubble), var(--primary));
   --gradient-sky: linear-gradient(
     180deg,
-    oklch(0.97 0.04 96),
-    oklch(0.99 0.01 95)
+    rgb(232, 225, 205),
+    rgb(240, 234, 220)
   );
+
   --shadow-pop: 0 4px 0 0 var(--ink);
   --shadow-pop-sm: 0 5px 0 0 var(--ink);
-  --shadow-float: 0 24px 50px -20px
-    color-mix(in oklab, var(--ink) 45%, transparent);
+  --shadow-float: 0 24px 50px -20px rgba(22, 34, 68, 0.55);
 
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-1: rgb(198, 91, 30);
+  --chart-2: rgb(42, 142, 149);
+  --chart-3: rgb(42, 68, 118);
 }
