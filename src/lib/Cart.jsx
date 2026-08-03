@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
-import { products } from "../data/products";
+import { packs } from "../data/products";
 
 const Ctx = createContext(null);
 
@@ -9,10 +9,10 @@ export function CartProvider({ children }) {
   const value = useMemo(() => {
     const items = lines
       .map((line) => ({
-        product: products.find((p) => p.slug === line.slug),
+        pack: packs.find((p) => p.id === line.id),
         qty: line.qty,
       }))
-      .filter((item) => item.product);
+      .filter((item) => item.pack);
 
     return {
       lines,
@@ -21,45 +21,62 @@ export function CartProvider({ children }) {
       count: lines.reduce((total, line) => total + line.qty, 0),
 
       total: items.reduce(
-        (total, item) => total + item.product.price * item.qty,
+        (total, item) => total + item.pack.price * item.qty,
         0
       ),
 
-      add: (slug, qty = 1) => {
-        setLines((prev) => {
-          const exists = prev.find((line) => line.slug === slug);
+      // add: (id, qty = 1) => {
+      //   setLines((prev) => {
+      //     const exists = prev.find((line) => line.slug === slug);
 
-          if (exists) {
-            return prev.map((line) =>
-              line.slug === slug
-                ? { ...line, qty: line.qty + qty }
-                : line
-            );
-          }
+      //     if (exists) {
+      //       return prev.map((line) =>
+      //         line.slug === slug
+      //           ? { ...line, qty: line.qty + qty }
+      //           : line
+      //       );
+      //     }
 
-          return [...prev, { slug, qty }];
-        });
-      },
+      //     return [...prev, { slug, qty }];
+      //   });
+      // },
+      add: (id, qty = 1) =>
+      setLines((prev) =>
+        prev.some((l) => l.id === id)
+          ? prev.map((l) =>
+              l.id === id ? { ...l, qty: l.qty + qty } : l
+            )
+          : [...prev, { id, qty }]
+      ),
 
-      remove: (slug) => {
+      remove: (id) => {
         setLines((prev) =>
-          prev.filter((line) => line.slug !== slug)
+          prev.filter((line) => line.id !== id)
         );
       },
 
-      setQty: (slug, qty) => {
-        setLines((prev) => {
-          if (qty <= 0) {
-            return prev.filter((line) => line.slug !== slug);
-          }
+      // setQty: (id, qty) => {
+      //   setLines((prev) => {
+      //     if (qty <= 0) {
+      //       return prev.filter((line) => line.slug !== slug);
+      //     }
 
-          return prev.map((line) =>
-            line.slug === slug
-              ? { ...line, qty }
-              : line
-          );
-        });
-      },
+      //     return prev.map((line) =>
+      //       line.slug === slug
+      //         ? { ...line, qty }
+      //         : line
+      //     );
+      //   });
+      // },
+
+       setQty: (id, qty) =>
+      setLines((prev) =>
+        qty <= 0
+          ? prev.filter((l) => l.id !== id)
+          : prev.map((l) =>
+              l.id === id ? { ...l, qty } : l
+            )
+      ),
       clear: () => setLines([]),
     };
   }, [lines]);
@@ -80,3 +97,4 @@ export function useCart() {
 
   return ctx;
 }
+

@@ -1,7 +1,9 @@
 import { Check } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { products } from "../data/products";
+import { formatPkr, mixPacks, packsFor, perPiece, products, savings } from "../data/products";
 import { useCart } from "../lib/Cart";
+import { useState } from "react";
+import { PackCard } from "../components/PackCard";
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -26,6 +28,9 @@ export default function ProductDetails() {
   }
 
   const isKing = product.accent === "king";
+  const options = packsFor(product.slug);
+  const [selected, setSelected] = useState(options[0]?.id ?? "");
+  const pack = options.find((o) => o.id === selected) ?? options[0];
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-14">
@@ -59,16 +64,45 @@ export default function ProductDetails() {
           </h1>
 
           <p className="mt-3 font-display text-3xl font-extrabold text-primary">
-            ${product.price.toFixed(2)}
-
-            <span className="ml-2 text-lg font-bold text-muted-foreground line-through">
-              ${product.compareAt.toFixed(2)}
-            </span>
+            {pack ? formatPkr(pack.price) : formatPkr(product.price)}
+            {pack && pack.pieces > 1 ? (
+              <span className="ml-2 text-base font-bold text-muted-foreground">
+                {formatPkr(Math.round(perPiece(pack)))} per scrub
+              </span>
+            ) : null}
           </p>
 
-          <p className="mt-4 text-lg text-muted-foreground">
-            {product.blurb}
-          </p>
+          <p className="mt-4 text-lg text-muted-foreground">{product.blurb}</p>
+
+          <div className="mt-6 grid gap-3">
+            {options.map((o) => {
+              const active = o.id === pack?.id;
+              const save = savings(o);
+              return (
+                <button
+                  key={o.id}
+                  onClick={() => setSelected(o.id)}
+                  className={`flex items-center justify-between rounded-3xl border-4 px-5 py-4 text-left transition-colors ${
+                    active
+                      ? "border-ink bg-secondary shadow-pop-sm"
+                      : "border-ink/10 bg-card"
+                  }`}
+                >
+                  <span>
+                    <span className="block font-display text-lg font-extrabold text-ink">
+                      {o.pieces === 1 ? "Single piece" : `Pack of ${o.pieces}`}
+                    </span>
+                    <span className="text-xs font-bold text-muted-foreground">
+                      {save > 0 ? `Save ${formatPkr(save)}` : "Try one first"}
+                    </span>
+                  </span>
+                  <span className="font-display text-xl font-extrabold text-primary">
+                    {formatPkr(o.price)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
           <ul className="mt-6 space-y-2">
             {product.perks.map((perk) => (
@@ -84,15 +118,15 @@ export default function ProductDetails() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <button
-              onClick={() => add(product.slug)}
-              className="rounded-full  bg-foreground press-pop border-4 border-ink px-8 py-4 cursor-pointer font-display text-lg font-extrabold text-background transition-transform hover:-translate-y-1"
+              onClick={() => pack && add(pack.id)}
+              className="press-pop rounded-full border-4 border-ink bg-foreground px-8 py-4 font-display text-lg font-extrabold text-background shadow-pop"
             >
-              Add to Bag
+              Add to Bag · {pack ? formatPkr(pack.price) : ""}
             </button>
 
             <Link
               to="/cart"
-              className="rounded-full border-4 border-ink press-pop bg-card px-8 py-4 font-display text-lg font-extrabold text-ink transition-colors hover:bg-secondary"
+              className="press-pop rounded-full border-4 border-ink/10 bg-card px-8 py-4 font-display text-lg font-extrabold text-ink shadow-pop"
             >
               View Bag
             </Link>
@@ -113,6 +147,15 @@ export default function ProductDetails() {
           </dl>
         </div>
       </div>
+      <section className="mt-20">
+        <h2 className="font-display text-4xl font-extrabold text-ink">Better together</h2>
+        <p className="mt-2 text-muted-foreground">Bundle King and Queen and save more per scrub.</p>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {mixPacks.map((p) => (
+            <PackCard key={p.id} pack={p} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

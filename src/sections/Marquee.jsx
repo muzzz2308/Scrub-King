@@ -7,7 +7,7 @@ export default function Marquee() {
             key={i}
             className="font-display text-lg font-extrabold tracking-wide text-background uppercase"
           >
-            Free shipping over $25 ✦ 60-day smile guarantee ✦ Ships in 24 hours
+            Free shipping over PKR 700 ✦ 60-day smile guarantee ✦ Ships in 24 hours
             ✦
           </p>
         ))}

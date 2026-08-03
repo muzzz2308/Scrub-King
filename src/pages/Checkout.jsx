@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../lib/Cart";
+import { formatPkr, getPack } from "../data/products";
 
 const empty = {
   name: "",
@@ -20,8 +21,8 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [placed, setPlaced] = useState(null);
 
-  const shipping = total >= 25 || total === 0 ? 0 : 4.95;
-  const codFee = total === 0 ? 0 : 1.5;
+  const shipping = total >= 700 || total === 0 ? 0 : 150;
+  const codFee = total === 0 ? 0 : 50;
   const grand = total + shipping + codFee;
 
   function set(key, value) {
@@ -83,7 +84,7 @@ export default function CheckoutPage() {
             Order <span className="font-bold text-ink">{placed.id}</span> is on
             its way. Keep{" "}
             <span className="font-bold text-ink">
-              ${placed.total.toFixed(2)}
+              {formatPkr(placed.total)}
             </span>{" "}
             in cash ready for the courier.
           </p>
@@ -194,7 +195,7 @@ export default function CheckoutPage() {
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               The only payment method for now. Hand the exact amount to the
-              courier — a ${codFee.toFixed(2)} handling fee applies.
+              courier — a {formatPkr(codFee)} handling fee applies.
             </p>
           </div>
 
@@ -202,7 +203,7 @@ export default function CheckoutPage() {
             type="submit"
             className="press-pop mt-6 w-full border-4 border-ink rounded-full bg-gradient-bubble py-4 font-display text-lg font-extrabold text-accent-foreground shadow-pop"
           >
-            Place order · ${grand.toFixed(2)}
+            Place order · {formatPkr(grand)}
           </button>
           <button
             type="button"
@@ -217,39 +218,53 @@ export default function CheckoutPage() {
             Order summary
           </h2>
           <ul className="mt-5 space-y-3">
-            {items.map(({ product, qty }) => (
-              <li key={product.slug} className="flex items-center gap-3">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  width={900}
-                  height={900}
-                  loading="lazy"
-                  className="size-12 object-contain"
-                />
+            {items.map(({ pack, qty }) => (
+              <li key={pack.id} className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {pack.contents.slice(0, 2).map((slug, i) => {
+                    const p = getPack(slug);
+
+                    return p ? (
+                      <img
+                        key={`${slug}-${i}`}
+                        src={p.image}
+                        alt={p.name}
+                        width={900}
+                        height={900}
+                        loading="lazy"
+                        className="size-12 object-contain"
+                      />
+                    ) : null;
+                  })}
+                </div>
+
                 <div className="flex-1">
                   <p className="font-display font-extrabold text-ink">
-                    {product.name}
+                    {pack.name}
                   </p>
-                  <p className="text-xs text-muted-foreground">Qty {qty}</p>
+
+                  <p className="text-xs text-muted-foreground">
+                    {pack.subtitle} · Qty {qty}
+                  </p>
                 </div>
+
                 <p className="font-display font-extrabold text-primary">
-                  ${(product.price * qty).toFixed(2)}
+                  {formatPkr(pack.price * qty)}
                 </p>
               </li>
             ))}
           </ul>
           <div className="mt-5 space-y-2 border-t-4 border-ink/10 pt-4 text-sm font-semibold text-muted-foreground">
-            <Row label="Subtotal" value={`$${total.toFixed(2)}`} />
+            <Row label="Subtotal" value={formatPkr(total)} />
             <Row
               label="Shipping"
-              value={shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+              value={shipping === 0 ? "Free" : formatPkr(shipping)}
             />
-            <Row label="Cash handling" value={`$${codFee.toFixed(2)}`} />
+            <Row label="Cash handling" value={formatPkr(codFee)} />
           </div>
           <div className="mt-4 flex justify-between font-display text-2xl font-extrabold text-ink">
             <span>Pay on delivery</span>
-            <span>${grand.toFixed(2)}</span>
+            <span>{formatPkr(grand)}</span>
           </div>
         </aside>
       </div>
@@ -266,12 +281,7 @@ function Row({ label, value }) {
   );
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-  error,
-}) {
+function Field({ label, value, onChange, error }) {
   return (
     <label className="block">
       <span className="text-sm font-bold text-ink">{label}</span>

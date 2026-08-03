@@ -26,10 +26,10 @@ export default function Hero() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
-              to="/"
+              to="/shop"
               className="press-pop rounded-full border-4 border-ink bg-gradient-sun px-7 py-4 font-display text-lg font-extrabold text-ink shadow-pop"
             >
-              Shop the squad
+               Scrub Shop
             </Link>
             <Link
               to="/about"

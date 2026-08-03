@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../lib/Cart";
+import { formatPkr, packsFor, SINGLE_PRICE } from "../data/products";
 
 export function ProductCard({ product }) {
   const { add } = useCart();
   const isKing = product.accent === "king";
+  const single = packsFor(product.slug).find((p) => p.pieces === 1);
 
   return (
     <article
@@ -32,26 +34,27 @@ export function ProductCard({ product }) {
             {product.name}
           </h3>
           <p className="font-display text-xl font-extrabold text-primary">
-            ${product.price.toFixed(2)}
-            <span className="ml-1 text-sm font-bold text-muted-foreground line-through">
-              ${product.compareAt.toFixed(2)}
-            </span>
+            {formatPkr(SINGLE_PRICE)}
+            <span className="ml-1 text-xs font-bold text-muted-foreground">/ piece</span>
           </p>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">{product.blurb}</p>
+        <p className="mt-2 text-xs font-extrabold tracking-wide text-ink uppercase">
+          Packs of 5 from {formatPkr(899)}
+        </p>
 
         <div className="mt-4 flex gap-2">
           <button
-            onClick={() => add(product.slug)}
+            onClick={() => single && add(single.id)}
             className="flex-1 press-pop rounded-full bg-foreground px-4 py-3 text-sm font-extrabold text-background shadow-pop transition-transform hover:-translate-y-0.5"
           >
-            Add to bag
+            Add single
           </button>
           <Link
             to={`/shop/${product.slug}`}
             className="rounded-full press-pop border-4 border-ink px-4 py-3 text-sm font-extrabold text-foreground shadow-pop transition-colors hover:bg-secondary"
           >
-            Details
+            All packs
           </Link>
         </div>
       </div>

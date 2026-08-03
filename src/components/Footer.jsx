@@ -31,7 +31,7 @@ export default function Footer() {
         <div className="text-sm">
           <p className="font-display text-lg font-bold text-ink">Happy promise</p>
           <p className="mt-3 text-muted-foreground">
-            Free shipping over $25 · 60-day smile guarantee · Ships in 24h
+            Free shipping over PKR 700 · 60-day smile guarantee · Ships in 24h
           </p>
         </div>
       </div>
