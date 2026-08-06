@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useCatalog } from "../lib/Catalog";
+import { AboutPageSkeleton } from "../components/skeleton/PageSkeletons";
 
 const steps = [
   {
@@ -19,6 +21,12 @@ const steps = [
 ];
 
 export default function About() {
+  const { loading } = useCatalog();
+
+  if (loading) {
+    return <AboutPageSkeleton />;
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-5 py-16">
       <h1 className="font-display text-5xl font-extrabold text-ink sm:text-6xl">

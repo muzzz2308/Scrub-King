@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../lib/Cart";
-import { formatPkr, getPack } from "../data/products";
+import { useCatalog } from "../lib/Catalog";
+import { createOrder } from "../lib/orders";
+import { formatPkr } from "../data/products";
+import { CheckoutPageSkeleton } from "../components/skeleton/PageSkeletons";
 
 const empty = {
   name: "",
@@ -15,13 +18,16 @@ const empty = {
 
 export default function CheckoutPage() {
   const { items, total, clear } = useCart();
+  const { getProduct, loading: catalogLoading } = useCatalog();
   const navigate = useNavigate();
 
   const [form, setForm] = useState(empty);
   const [errors, setErrors] = useState({});
   const [placed, setPlaced] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const shipping = total >= 700 || total === 0 ? 0 : 150;
+  const shipping = total >= 1000 || total === 0 ? 0 : 150;
   const codFee = total === 0 ? 0 : 50;
   const grand = total + shipping + codFee;
 
@@ -37,7 +43,7 @@ export default function CheckoutPage() {
     }));
   }
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
 
     const next = {};
@@ -58,14 +64,31 @@ export default function CheckoutPage() {
       return;
     }
 
-    const id = `SQ-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+    setSubmitting(true);
+    setSubmitError("");
 
-    setPlaced({
-      id,
-      total: grand,
-    });
+    try {
+      const result = await createOrder({
+        form,
+        items,
+        subtotal: total,
+        shipping,
+        codFee,
+        total: grand,
+      });
 
-    clear();
+      setPlaced({
+        id: result.id,
+        total: result.total,
+        persisted: result.persisted,
+      });
+
+      clear();
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Could not place order");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (placed) {
@@ -87,6 +110,11 @@ export default function CheckoutPage() {
               {formatPkr(placed.total)}
             </span>{" "}
             in cash ready for the courier.
+            {!placed.persisted ? (
+              <span className="mt-2 block text-sm">
+                Demo mode: connect Supabase to save real orders.
+              </span>
+            ) : null}
           </p>
 
           <Link
@@ -121,6 +149,10 @@ export default function CheckoutPage() {
         </div>
       </div>
     );
+  }
+
+  if (catalogLoading) {
+    return <CheckoutPageSkeleton />;
   }
 
   return (
@@ -201,10 +233,14 @@ export default function CheckoutPage() {
 
           <button
             type="submit"
-            className="press-pop mt-6 w-full border-4 border-ink rounded-full bg-gradient-bubble py-4 font-display text-lg font-extrabold text-accent-foreground shadow-pop"
+            disabled={submitting}
+            className="press-pop mt-6 w-full border-4 border-ink rounded-full bg-gradient-bubble py-4 font-display text-lg font-extrabold text-accent-foreground shadow-pop disabled:opacity-60"
           >
-            Place order · {formatPkr(grand)}
+            {submitting ? "Placing order…" : `Place order · ${formatPkr(grand)}`}
           </button>
+          {submitError ? (
+            <p className="mt-3 text-sm font-bold text-destructive">{submitError}</p>
+          ) : null}
           <button
             type="button"
             onClick={() => navigate("/cart")}
@@ -222,7 +258,7 @@ export default function CheckoutPage() {
               <li key={pack.id} className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {pack.contents.slice(0, 2).map((slug, i) => {
-                    const p = getPack(slug);
+                    const p = getProduct(slug);
 
                     return p ? (
                       <img

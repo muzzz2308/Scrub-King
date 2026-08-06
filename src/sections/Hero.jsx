@@ -53,15 +53,15 @@ export default function Hero() {
           <img
             src="/King.webp"
             alt="Scrub King yellow smiley scrubber"
-            width={900}
-            height={900}
+            width={1000}
+            height={1000}
             className="relative z-10 w-56 animate-bob object-contain drop-shadow-2xl sm:w-72"
           />
           <img
             src="/Queen.webp"
             alt="Scrub Queen pink smiley scrubber"
-            width={900}
-            height={900}
+            width={1000}
+            height={1000}
             loading="lazy"
             className="absolute right-2 bottom-0 z-20 w-32 animate-bob object-contain drop-shadow-2xl sm:w-44"
           />

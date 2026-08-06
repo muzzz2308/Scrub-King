@@ -1,13 +1,16 @@
 import {
-  getProduct,
   formatPkr,
+  getPackCardImage,
   perPiece,
   savings,
 } from "../data/products";
+import { useCatalog } from "../lib/Catalog";
 import { useCart } from "../lib/Cart";
 
 export function PackCard({ pack, tone = "auto" }) {
   const { add } = useCart();
+  const { getProduct } = useCatalog();
+  const packImage = getPackCardImage(pack);
 
   const save = savings(pack);
 
@@ -31,25 +34,34 @@ export function PackCard({ pack, tone = "auto" }) {
       ) : null}
 
       <div
-        className={`grid place-items-center rounded-3xl border-4 border-ink ${bg} p-4`}
+        className={`grid place-items-center overflow-hidden rounded-3xl border-4 border-ink ${bg}`}
       >
-        <div className="flex -space-x-4">
-          {pack.contents.slice(0, 4).map((slug, i) => {
-            const p = getProduct(slug);
+        {packImage ? (
+          <img
+            src={packImage}
+            alt={`${pack.name} — four smiley scrub sponges on a kitchen counter`}
+            loading="lazy"
+            className="aspect-[4/3] w-full rounded-2xl object-cover shadow-pop-sm"
+          />
+        ) : (
+          <div className="flex -space-x-4">
+            {pack.contents.slice(0, 4).map((slug, i) => {
+              const p = getProduct(slug);
 
-            return p ? (
-              <img
-                key={`${slug}-${i}`}
-                src={p.image}
-                alt={`${p.name} scrubber`}
-                width={900}
-                height={900}
-                loading="lazy"
-                className="size-16 object-contain drop-shadow-lg"
-              />
-            ) : null;
-          })}
-        </div>
+              return p ? (
+                <img
+                  key={`${slug}-${i}`}
+                  src={p.image}
+                  alt={`${p.name} scrubber`}
+                  width={900}
+                  height={900}
+                  loading="lazy"
+                  className="size-16 object-contain drop-shadow-lg"
+                />
+              ) : null;
+            })}
+          </div>
+        )}
       </div>
 
       <h3 className="mt-4 font-display text-xl font-extrabold text-ink">

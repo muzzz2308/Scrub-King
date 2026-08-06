@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../lib/Cart";
-import { formatPkr, packsFor, SINGLE_PRICE } from "../data/products";
+import { useCatalog } from "../lib/Catalog";
+import { formatPkr, SINGLE_PRICE, getProductCardImage } from "../data/products";
 
 export function ProductCard({ product }) {
   const { add } = useCart();
+  const { packsFor } = useCatalog();
   const isKing = product.accent === "king";
   const single = packsFor(product.slug).find((p) => p.pieces === 1);
 
@@ -13,19 +15,16 @@ export function ProductCard({ product }) {
         isKing ? "bg-gradient-sun" : "bg-gradient-bubble"
       }`}
     >
-      <span className="inline-block -rotate-2 border-4 border-ink rounded-full bg-background/85 px-3 py-1 text-xs font-extrabold tracking-wide text-ink uppercase">
-        {product.tagline}
-      </span>
-
-      <Link to={`/shop/${product.slug}`} className="block">
+      <Link to={`/shop/${product.slug}`} className="relative mb-4 block">
         <img
-          src={product.image}
-          alt={`${product.name} smiley sponge`}
-          width={900}
-          height={900}
+          src={getProductCardImage(product)}
+          alt={`${product.name} scrubber with its retail box`}
           loading="lazy"
-          className="mx-auto my-4 size-44 object-contain animate-bob drop-shadow-xl transition-transform duration-500 group-hover:rotate-12"
+          className="w-full rounded-3xl border-4 border-ink object-cover shadow-pop-sm"
         />
+        <span className="absolute top-3 left-3 -rotate-2 rounded-full border-4 border-ink bg-background/90 px-3 py-1 text-xs font-extrabold tracking-wide text-ink uppercase shadow-pop-sm">
+          {product.tagline}
+        </span>
       </Link>
 
       <div className="rounded-3xl border-4 border-ink bg-background/90 p-5">

@@ -1,16 +1,36 @@
 import { Check } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { formatPkr, mixPacks, packsFor, perPiece, products, savings } from "../data/products";
+import { formatPkr, getProductCardImage, perPiece, savings } from "../data/products";
+import { useCatalog } from "../lib/Catalog";
 import { useCart } from "../lib/Cart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ProductDetailSkeleton } from "../components/skeleton/PageSkeletons";
+
 import { PackCard } from "../components/PackCard";
 
 export default function ProductDetails() {
   const { slug } = useParams();
-
+  const { products, mixPacks, packsFor, loading } = useCatalog();
   const product = products.find((p) => p.slug === slug);
-
   const { add } = useCart();
+
+  const options = product ? packsFor(product.slug) : [];
+  const [selected, setSelected] = useState("");
+  const pack = options.find((o) => o.id === selected) ?? options[0];
+
+  useEffect(() => {
+    if (!product) return;
+    const nextOptions = packsFor(product.slug);
+    if (nextOptions.length) {
+      setSelected((current) =>
+        nextOptions.some((o) => o.id === current) ? current : nextOptions[0].id,
+      );
+    }
+  }, [product, packsFor]);
+
+  if (loading) {
+    return <ProductDetailSkeleton />;
+  }
 
   if (!product) {
     return (
@@ -28,9 +48,6 @@ export default function ProductDetails() {
   }
 
   const isKing = product.accent === "king";
-  const options = packsFor(product.slug);
-  const [selected, setSelected] = useState(options[0]?.id ?? "");
-  const pack = options.find((o) => o.id === selected) ?? options[0];
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-14">
@@ -41,25 +58,31 @@ export default function ProductDetails() {
         ← Back to shop
       </Link>
 
-      <div className="mt-6 grid gap-10 md:grid-cols-2">
-        <div
-          className={`grid place-items-center rounded-4xl border-4 border-ink p-10 shadow-pop ${
-            isKing ? "bg-gradient-sun" : "bg-gradient-bubble"
-          }`}
-        >
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-64 animate-bob object-contain drop-shadow-2xl"
-          />
+      <div className="mt-6 grid items-start gap-10 md:grid-cols-2">
+        <div className="md:sticky md:top-24">
+          <div
+            className={`relative overflow-hidden rounded-4xl border-4 border-ink p-4 shadow-pop ${
+              isKing ? "bg-gradient-sun" : "bg-gradient-bubble"
+            }`}
+          >
+            <div className="pointer-events-none absolute -top-10 -right-10 size-36 rounded-full bg-sunny/45 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-10 -left-10 size-32 rounded-full bg-background/35 blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-3xl border-4 border-ink bg-background shadow-pop-sm">
+              <img
+                src={getProductCardImage(product)}
+                alt={`${product.name} scrubber with its retail box`}
+                className="aspect-[4/5] w-full object-cover object-center sm:aspect-[3/4]"
+              />
+              <span className="absolute top-4 left-4 -rotate-2 rounded-full border-4 border-ink bg-sunny px-4 py-1.5 text-xs font-extrabold tracking-wide text-ink uppercase shadow-pop-sm">
+                {product.tagline}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div>
-          <span className="inline-block rounded-full bg-secondary px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-secondary-foreground">
-            {product.tagline}
-          </span>
-
-          <h1 className="mt-3 font-display text-5xl font-extrabold text-ink">
+          <h1 className="font-display text-5xl font-extrabold text-ink">
             {product.name}
           </h1>
 
@@ -132,8 +155,10 @@ export default function ProductDetails() {
             </Link>
           </div>
 
-          <dl className="mt-8 grid gap-3 rounded-3xl border-4 border-ink/10 bg-card p-6 sm:grid-cols-3">
-            {product.specs.map((spec) => (
+          <dl className="mt-8 grid gap-3 rounded-3xl border-4 border-ink/10 bg-card p-6 sm:grid-cols-2">
+            {product.specs
+              .filter((spec) => spec.label !== "Lifespan")
+              .map((spec) => (
               <div key={spec.label}>
                 <dt className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
                   {spec.label}

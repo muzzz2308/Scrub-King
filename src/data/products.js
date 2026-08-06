@@ -1,7 +1,26 @@
-import king from "/King.webp";
-import queen from "/Queen.webp";
+import king from "/Kingimg.webp";
+import queen from "/Queenimg.webp";
+import pack4 from "/pack4.webp";
+import Squad from "/Squad.webp";
 
-export const products = [
+export const PRODUCT_CARD_IMAGES = {
+  "scrub-king": king,
+  "scrub-queen": queen,
+};
+
+export const PACK_CARD_IMAGES = {
+  "family-4": pack4,
+};
+
+export function getProductCardImage(product) {
+  return PRODUCT_CARD_IMAGES[product.slug] ?? product.image;
+}
+
+export function getPackCardImage(pack) {
+  return pack.image ?? PACK_CARD_IMAGES[pack.id];
+}
+
+export const STATIC_PRODUCTS = [
   {
     slug: "scrub-king",
     name: "Scrub King",
@@ -20,7 +39,6 @@ export const products = [
     specs: [
       { label: "Texture", value: "Soft / Firm" },
       { label: "Best for", value: "Pots, pans, glass" },
-      { label: "Lifespan", value: "~2 months" },
     ],
   },
   {
@@ -41,14 +59,11 @@ export const products = [
     specs: [
       { label: "Texture", value: "Scrub / Sponge" },
       { label: "Best for", value: "Counters, sinks, dishes" },
-      { label: "Lifespan", value: "~2 months" },
     ],
   },
 ];
 
-export const getProduct = (slug) => products.find((p) => p.slug === slug);
-
-export const packs = [
+export const STATIC_PACKS = [
   {
     id: "king-1",
     name: "Scrub King · Single",
@@ -76,15 +91,7 @@ export const packs = [
     contents: ["scrub-king", "scrub-queen"],
     belongsTo: "mix",
     badge: "Best starter",
-  },
-  {
-    id: "trio",
-    name: "Pack of 3",
-    subtitle: "King + Queen mix, 3 pieces",
-    price: 549,
-    pieces: 3,
-    contents: ["scrub-king", "scrub-queen", "scrub-king"],
-    belongsTo: "mix",
+    image: Squad,
   },
   {
     id: "family-4",
@@ -95,6 +102,27 @@ export const packs = [
     contents: ["scrub-king", "scrub-queen", "scrub-king", "scrub-queen"],
     belongsTo: "mix",
     badge: "Most popular",
+    image: pack4,
+  },
+  {
+    id: "king-3",
+    name: "Pack of 3 · Scrub King",
+    subtitle: "3 × Scrub King",
+    price: 549,
+    pieces: 3,
+    contents: ["scrub-king"],
+    belongsTo: "scrub-king",
+    badge: "Best value",
+  },
+  {
+    id: "queen-3",
+    name: "Pack of 3 · Scrub Queen",
+    subtitle: "3 × Scrub Queen",
+    price: 549,
+    pieces: 3,
+    contents: ["scrub-queen"],
+    belongsTo: "scrub-queen",
+    badge: "Best value",
   },
   {
     id: "king-5",
@@ -118,17 +146,28 @@ export const packs = [
   },
 ];
 
-export const getPack = (id) => packs.find((p) => p.id === id);
-
-export const packsFor = (slug) => packs.filter((p) => p.belongsTo === slug);
-
-export const mixPacks = packs.filter((p) => p.belongsTo === "mix");
+export const products = STATIC_PRODUCTS;
+export const packs = STATIC_PACKS;
 
 export const SINGLE_PRICE = 199;
 
 export const formatPkr = (n) =>
   `Rs ${n.toLocaleString("en-PK", { maximumFractionDigits: 0 })}`;
 
-/** price per piece, for "save" messaging */
 export const perPiece = (pack) => pack.price / pack.pieces;
+
 export const savings = (pack) => pack.pieces * SINGLE_PRICE - pack.price;
+
+export function getProduct(slug, catalog = STATIC_PRODUCTS) {
+  return catalog.find((p) => p.slug === slug);
+}
+
+export function getPack(id, catalog = STATIC_PACKS) {
+  return catalog.find((p) => p.id === id);
+}
+
+export function packsFor(slug, catalog = STATIC_PACKS) {
+  return catalog.filter((p) => p.belongsTo === slug);
+}
+
+export const mixPacks = STATIC_PACKS.filter((p) => p.belongsTo === "mix");

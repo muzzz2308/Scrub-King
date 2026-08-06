@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { HappyPromiseTrigger } from "./AdminSecretTrigger";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -11,7 +12,7 @@ export default function Footer() {
     <footer className="mt-24 border-t-4 border-ink bg-secondary/60">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 sm:grid-cols-3">
         <div>
-          <p className="font-display text-2xl font-extrabold text-ink">Scrub Squad</p>
+          <p className="font-display text-2xl font-extrabold text-ink">Scrub King</p>
           <p className="mt-2 max-w-xs text-sm text-muted-foreground">
             Two smiley sidekicks that make the messiest sink the best part of your day.
           </p>
@@ -29,9 +30,9 @@ export default function Footer() {
           </ul>
         </div>
         <div className="text-sm">
-          <p className="font-display text-lg font-bold text-ink">Happy promise</p>
+          <HappyPromiseTrigger />
           <p className="mt-3 text-muted-foreground">
-            Free shipping over PKR 700 · 60-day smile guarantee · Ships in 24h
+            Free shipping over PKR 1000 · makes cleaning fun · Ships in 24h
           </p>
         </div>
       </div>

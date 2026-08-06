@@ -1,16 +1,39 @@
-# React + Vite
+# Scrub Squad
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + Vite storefront for Scrub King and Scrub Queen, with Supabase for orders, catalog, and admin.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Without Supabase env vars, the app runs in demo mode with static catalog data and client-only checkout.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Supabase setup
 
-## Expanding the Oxlint configuration
+1. Create a project at [supabase.com](https://supabase.com).
+2. Copy `.env.example` to `.env.local` and add your project URL and anon key.
+3. Run the schema and seed in the Supabase SQL editor:
+   - [`supabase/migrations/001_initial_schema.sql`](supabase/migrations/001_initial_schema.sql)
+   - [`supabase/migrations/002_order_purge_and_revenue.sql`](supabase/migrations/002_order_purge_and_revenue.sql)
+   - [`supabase/seed.sql`](supabase/seed.sql)
+4. Create an admin user in **Authentication → Users**.
+5. Deploy the order notification function:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npx supabase functions deploy notify-order
+npx supabase secrets set RESEND_API_KEY=your_key NOTIFY_EMAIL=you@example.com
+```
+
+## Admin
+
+Sign in at `/admin/login` with your Supabase admin user to manage orders and products.
+
+## Scripts
+
+- `npm run dev` — start dev server
+- `npm run build` — production build
+- `npm run preview` — preview production build
+- `npm run lint` — run Oxlint

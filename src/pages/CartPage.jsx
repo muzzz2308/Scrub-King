@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../lib/Cart";
-import { formatPkr, getPack } from "../data/products";
+import { useCatalog } from "../lib/Catalog";
+import { formatPkr } from "../data/products";
+import { CartPageSkeleton } from "../components/skeleton/PageSkeletons";
 
 export default function CartPage() {
   const { items, total, setQty, remove } = useCart();
-  const shipping = total >= 700 || total === 0 ? 0 : 150;
+  const { getProduct, loading } = useCatalog();
+  const shipping = total >= 1000 || total === 0 ? 0 : 150;
 
+  if (loading && items.length > 0) {
+    return <CartPageSkeleton />;
+  }
   return (
     <div className="mx-auto max-w-4xl px-5 py-16">
       <h1 className="font-display text-5xl font-extrabold text-ink">Your bag</h1>
@@ -30,7 +36,7 @@ export default function CartPage() {
               >
                 <div className="flex -space-x-3">
                   {pack.contents.slice(0, 2).map((slug, i) => {
-                    const p = getPack(slug);
+                    const p = getProduct(slug);
                     return p ? (
                       <img
                         key={`${slug}-${i}`}

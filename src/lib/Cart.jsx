@@ -1,9 +1,10 @@
 import { createContext, useContext, useMemo, useState } from "react";
-import { packs } from "../data/products";
+import { useCatalog } from "./Catalog";
 
 const Ctx = createContext(null);
 
 export function CartProvider({ children }) {
+  const { packs } = useCatalog();
   const [lines, setLines] = useState([]);
 
   const value = useMemo(() => {
@@ -79,7 +80,7 @@ export function CartProvider({ children }) {
       ),
       clear: () => setLines([]),
     };
-  }, [lines]);
+  }, [lines, packs]);
 
   return (
     <Ctx.Provider value={value}>

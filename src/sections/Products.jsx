@@ -1,7 +1,13 @@
-import { products } from "../data/products";
+import { useCatalog } from "../lib/Catalog";
+import { HomeProductsSkeleton } from "../components/skeleton/PageSkeletons";
 import { ProductCard } from "../components/ProductCard";
 
 export default function Products() {
+  const { products, loading } = useCatalog();
+
+  if (loading) {
+    return <HomeProductsSkeleton />;
+  }
   return (
     <section className="mx-auto max-w-6xl px-5 py-20">
       <h2 className="text-center font-display text-4xl font-extrabold text-ink sm:text-5xl">
