@@ -1,8 +1,8 @@
 import { Check } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { formatPkr, getProductCardImage, perPiece, savings } from "../data/products";
+import { AddToBagButton } from "../components/AddToBagButton";
 import { useCatalog } from "../lib/Catalog";
-import { useCart } from "../lib/Cart";
 import { useEffect, useState } from "react";
 import { ProductDetailSkeleton } from "../components/skeleton/PageSkeletons";
 
@@ -12,7 +12,6 @@ export default function ProductDetails() {
   const { slug } = useParams();
   const { products, mixPacks, packsFor, loading } = useCatalog();
   const product = products.find((p) => p.slug === slug);
-  const { add } = useCart();
 
   const options = product ? packsFor(product.slug) : [];
   const [selected, setSelected] = useState("");
@@ -140,12 +139,13 @@ export default function ProductDetails() {
           </ul>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              onClick={() => pack && add(pack.id)}
+            <AddToBagButton
+              packId={pack?.id}
+              disabled={!pack}
               className="press-pop rounded-full border-4 border-ink bg-foreground px-8 py-4 font-display text-lg font-extrabold text-background shadow-pop"
             >
               Add to Bag · {pack ? formatPkr(pack.price) : ""}
-            </button>
+            </AddToBagButton>
 
             <Link
               to="/cart"

@@ -32,12 +32,12 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="font-display text-4xl font-extrabold text-ink">Dashboard</h1>
+      <h1 className="font-display text-3xl font-extrabold text-ink sm:text-4xl">Dashboard</h1>
       <p className="mt-2 text-muted-foreground">Overview of your Scrub King store.</p>
 
       {error ? <p className="mt-4 font-bold text-destructive">{error}</p> : null}
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard label="Active orders" value={String(pending.length)} accent="text-primary" />
         <StatCard label="Delivered" value={String(delivered.length)} />
         <StatCard label="Cancelled" value={String(cancelled.length)} />
@@ -47,13 +47,13 @@ export default function AdminDashboard() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           to="/admin/orders"
-          className="press-pop rounded-full border-4 border-ink bg-gradient-sun px-5 py-2.5 text-sm font-extrabold text-ink shadow-pop-sm"
+          className="press-pop w-full rounded-full border-4 border-ink bg-gradient-sun px-5 py-2.5 text-center text-sm font-extrabold text-ink shadow-pop-sm sm:w-auto"
         >
           View all orders
         </Link>
         <Link
           to="/admin/products"
-          className="press-pop rounded-full border-4 border-ink bg-card px-5 py-2.5 text-sm font-extrabold text-ink shadow-pop-sm"
+          className="press-pop w-full rounded-full border-4 border-ink bg-card px-5 py-2.5 text-center text-sm font-extrabold text-ink shadow-pop-sm sm:w-auto"
         >
           Manage products
         </Link>
@@ -114,7 +114,7 @@ function StatCard({ label, value, accent = "text-ink" }) {
   return (
     <div className="rounded-4xl border-4 border-ink bg-card p-6 shadow-pop">
       <p className="text-sm font-bold text-muted-foreground">{label}</p>
-      <p className={`mt-2 font-display text-3xl font-extrabold ${accent}`}>{value}</p>
+      <p className={`mt-2 font-display text-2xl font-extrabold sm:text-3xl ${accent}`}>{value}</p>
     </div>
   );
 }

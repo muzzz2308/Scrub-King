@@ -1,3 +1,4 @@
+import { AddToBagButton } from "./AddToBagButton";
 import {
   formatPkr,
   getPackCardImage,
@@ -5,10 +6,8 @@ import {
   savings,
 } from "../data/products";
 import { useCatalog } from "../lib/Catalog";
-import { useCart } from "../lib/Cart";
 
 export function PackCard({ pack, tone = "auto" }) {
-  const { add } = useCart();
   const { getProduct } = useCatalog();
   const packImage = getPackCardImage(pack);
 
@@ -79,12 +78,12 @@ export function PackCard({ pack, tone = "auto" }) {
         {save > 0 ? ` · save ${formatPkr(save)}` : ""}
       </p>
 
-      <button
-        onClick={() => add(pack.id)}
+      <AddToBagButton
+        packId={pack.id}
         className="press-pop mt-5 w-full rounded-full border-4 border-ink bg-foreground py-3 font-display text-base font-extrabold text-background shadow-pop-sm"
       >
         Add to bag
-      </button>
+      </AddToBagButton>
     </article>
   );
 }

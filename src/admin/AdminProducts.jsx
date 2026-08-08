@@ -132,7 +132,7 @@ export default function AdminProducts() {
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="font-display text-4xl font-extrabold text-ink">Products</h1>
+        <h1 className="font-display text-3xl font-extrabold text-ink sm:text-4xl">Products</h1>
         {message ? <p className="mt-2 font-bold text-primary">{message}</p> : null}
         {error ? <p className="mt-2 font-bold text-destructive">{error}</p> : null}
       </div>
@@ -140,7 +140,7 @@ export default function AdminProducts() {
       <section className="grid gap-8 lg:grid-cols-2">
         <form
           onSubmit={saveProduct}
-          className="rounded-4xl border-4 border-ink bg-card p-6 shadow-pop"
+          className="rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6"
         >
           <h2 className="font-display text-2xl font-extrabold text-ink">
             {productForm.slug ? "Edit product" : "Add product"}
@@ -173,14 +173,14 @@ export default function AdminProducts() {
               onChange={(v) => setProductForm((p) => ({ ...p, perks: v.split(",").map((s) => s.trim()) }))}
             />
           </div>
-          <button type="submit" className="press-pop mt-5 rounded-full border-4 border-ink bg-gradient-sun px-6 py-3 font-display font-extrabold shadow-pop">
+          <button type="submit" className="press-pop mt-5 w-full rounded-full border-4 border-ink bg-gradient-sun px-6 py-3 text-center font-display font-extrabold shadow-pop sm:w-auto">
             Save product
           </button>
         </form>
 
         <form
           onSubmit={savePack}
-          className="rounded-4xl border-4 border-ink bg-card p-6 shadow-pop"
+          className="rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6"
         >
           <h2 className="font-display text-2xl font-extrabold text-ink">
             {packForm.id ? "Edit pack" : "Add pack"}
@@ -195,7 +195,7 @@ export default function AdminProducts() {
             <Field label="Belongs to" value={packForm.belongsTo} onChange={(v) => setPackForm((p) => ({ ...p, belongsTo: v }))} />
             <Field label="Badge" value={packForm.badge} onChange={(v) => setPackForm((p) => ({ ...p, badge: v }))} />
           </div>
-          <button type="submit" className="press-pop mt-5 rounded-full border-4 border-ink bg-gradient-bubble px-6 py-3 font-display font-extrabold text-accent-foreground shadow-pop">
+          <button type="submit" className="press-pop mt-5 w-full rounded-full border-4 border-ink bg-gradient-bubble px-6 py-3 text-center font-display font-extrabold text-accent-foreground shadow-pop sm:w-auto">
             Save pack
           </button>
         </form>
@@ -207,12 +207,12 @@ export default function AdminProducts() {
           <ul className="space-y-3">
             {products.map((product) => (
               <li key={product.slug} className="rounded-3xl border-4 border-ink/10 bg-card p-4">
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="font-display font-extrabold text-ink">{product.name}</p>
                     <p className="text-sm text-muted-foreground">{product.slug} · {formatPkr(product.price)}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 sm:gap-2">
                     <button type="button" onClick={() => editProduct(product)} className="text-sm font-bold underline">Edit</button>
                     <button type="button" onClick={() => removeProduct(product.slug)} className="text-sm font-bold text-destructive underline">Delete</button>
                   </div>
@@ -224,12 +224,12 @@ export default function AdminProducts() {
           <ul className="space-y-3">
             {packs.map((pack) => (
               <li key={pack.id} className="rounded-3xl border-4 border-ink/10 bg-card p-4">
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="font-display font-extrabold text-ink">{pack.name}</p>
                     <p className="text-sm text-muted-foreground">{pack.id} · {formatPkr(pack.price)}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 sm:gap-2">
                     <button type="button" onClick={() => editPack(pack)} className="text-sm font-bold underline">Edit</button>
                     <button type="button" onClick={() => removePack(pack.id)} className="text-sm font-bold text-destructive underline">Delete</button>
                   </div>

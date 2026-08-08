@@ -1,11 +1,16 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { useCatalog } from "./Catalog";
+import { AddToBagCelebration } from "../components/AddToBagCelebration";
 
 const Ctx = createContext(null);
 
 export function CartProvider({ children }) {
   const { packs } = useCatalog();
   const [lines, setLines] = useState([]);
+  const [burst, setBurst] = useState(null);
+  const [bagPulse, setBagPulse] = useState(0);
+
+  const clearBurst = useCallback(() => setBurst(null), []);
 
   const value = useMemo(() => {
     const items = lines
@@ -18,73 +23,52 @@ export function CartProvider({ children }) {
     return {
       lines,
       items,
+      bagPulse,
 
       count: lines.reduce((total, line) => total + line.qty, 0),
 
       total: items.reduce(
         (total, item) => total + item.pack.price * item.qty,
-        0
+        0,
       ),
 
-      // add: (id, qty = 1) => {
-      //   setLines((prev) => {
-      //     const exists = prev.find((line) => line.slug === slug);
-
-      //     if (exists) {
-      //       return prev.map((line) =>
-      //         line.slug === slug
-      //           ? { ...line, qty: line.qty + qty }
-      //           : line
-      //       );
-      //     }
-
-      //     return [...prev, { slug, qty }];
-      //   });
-      // },
-      add: (id, qty = 1) =>
-      setLines((prev) =>
-        prev.some((l) => l.id === id)
-          ? prev.map((l) =>
-              l.id === id ? { ...l, qty: l.qty + qty } : l
-            )
-          : [...prev, { id, qty }]
-      ),
-
-      remove: (id) => {
+      add: (id, qty = 1, origin) => {
         setLines((prev) =>
-          prev.filter((line) => line.id !== id)
+          prev.some((l) => l.id === id)
+            ? prev.map((l) => (l.id === id ? { ...l, qty: l.qty + qty } : l))
+            : [...prev, { id, qty }],
         );
+
+        setBagPulse((pulse) => pulse + 1);
+
+        if (origin) {
+          setBurst({
+            id: Date.now(),
+            x: origin.x,
+            y: origin.y,
+          });
+        }
       },
 
-      // setQty: (id, qty) => {
-      //   setLines((prev) => {
-      //     if (qty <= 0) {
-      //       return prev.filter((line) => line.slug !== slug);
-      //     }
+      remove: (id) => {
+        setLines((prev) => prev.filter((line) => line.id !== id));
+      },
 
-      //     return prev.map((line) =>
-      //       line.slug === slug
-      //         ? { ...line, qty }
-      //         : line
-      //     );
-      //   });
-      // },
+      setQty: (id, qty) =>
+        setLines((prev) =>
+          qty <= 0
+            ? prev.filter((l) => l.id !== id)
+            : prev.map((l) => (l.id === id ? { ...l, qty } : l)),
+        ),
 
-       setQty: (id, qty) =>
-      setLines((prev) =>
-        qty <= 0
-          ? prev.filter((l) => l.id !== id)
-          : prev.map((l) =>
-              l.id === id ? { ...l, qty } : l
-            )
-      ),
       clear: () => setLines([]),
     };
-  }, [lines, packs]);
+  }, [lines, packs, bagPulse]);
 
   return (
     <Ctx.Provider value={value}>
       {children}
+      <AddToBagCelebration burst={burst} onDone={clearBurst} />
     </Ctx.Provider>
   );
 }
@@ -98,4 +82,3 @@ export function useCart() {
 
   return ctx;
 }
-

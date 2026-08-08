@@ -193,7 +193,7 @@ export function AdminDashboardSkeleton() {
     <div>
       <Skeleton className="h-10 w-48 rounded-full" />
       <Skeleton className="mt-2 h-5 w-72 rounded-full" />
-      <div className="mt-8 grid gap-4 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="rounded-4xl border-4 border-ink bg-card p-6 shadow-pop">
             <Skeleton className="h-4 w-24 rounded-full" />

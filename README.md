@@ -31,6 +31,23 @@ npx supabase secrets set RESEND_API_KEY=your_key NOTIFY_EMAIL=you@example.com
 
 Sign in at `/admin/login` with your Supabase admin user to manage orders and products.
 
+## Deploy on Vercel
+
+`.env.local` is gitignored and **never** uploaded to GitHub or Vercel. For production:
+
+1. Open [Vercel Dashboard](https://vercel.com) → your project → **Settings** → **Environment Variables**.
+2. Add these (exact names — Vite requires the `VITE_` prefix):
+
+   | Name | Value |
+   |------|--------|
+   | `VITE_SUPABASE_URL` | Your Supabase project URL |
+   | `VITE_SUPABASE_ANON_KEY` | Your Supabase anon public key |
+
+3. Enable them for **Production** (and Preview if you want admin on preview URLs).
+4. **Redeploy** — Vite bakes env vars at build time, so a new deploy is required after adding or changing variables.
+
+Find values in Supabase → **Project Settings** → **API**.
+
 ## Scripts
 
 - `npm run dev` — start dev server

@@ -54,12 +54,12 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="font-display text-4xl font-extrabold text-ink">Orders</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-display text-3xl font-extrabold text-ink sm:text-4xl">Orders</h1>
         <button
           type="button"
           onClick={load}
-          className="press-pop rounded-full border-4 border-ink bg-card px-4 py-2 text-sm font-extrabold shadow-pop-sm"
+          className="press-pop w-full rounded-full border-4 border-ink bg-card px-4 py-2 text-sm font-extrabold shadow-pop-sm sm:w-auto"
         >
           Refresh
         </button>
@@ -74,11 +74,11 @@ export default function AdminOrders() {
           {orders.map((order) => (
             <li
               key={order.id}
-              className="rounded-4xl border-4 border-ink bg-card p-6 shadow-pop"
+              className="rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6"
             >
-              <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="font-display text-2xl font-extrabold text-ink">
+                  <p className="font-display text-xl font-extrabold text-ink sm:text-2xl">
                     {order.order_number}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -91,6 +91,8 @@ export default function AdminOrders() {
                   ) : null}
                 </div>
                 <AdminSelect
+                  fullWidth
+                  className="w-full sm:w-auto"
                   value={order.status}
                   onChange={(e) => changeStatus(order.id, e.target.value)}
                   options={statuses}

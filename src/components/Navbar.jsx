@@ -50,7 +50,7 @@ function MobileNavLink({ to, label, icon: Icon, accent, tilt, pathname, index, o
 }
 
 export default function Navbar() {
-  const { count } = useCart();
+  const { count, bagPulse } = useCart();
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuTop, setMenuTop] = useState(0);
@@ -119,12 +119,18 @@ export default function Navbar() {
 
           <Link
             to="/cart"
-            className="relative press-pop inline-flex items-center border-4 border-ink gap-2 rounded-full bg-gradient-bubble px-4 py-2.5 text-sm font-extrabold text-accent-foreground shadow-pop"
+            className={`relative press-pop inline-flex items-center border-4 border-ink gap-2 rounded-full bg-gradient-bubble px-4 py-2.5 text-sm font-extrabold text-accent-foreground shadow-pop ${
+              bagPulse ? "animate-bag-bounce" : ""
+            }`}
           >
             <ShoppingBag className="size-4" />
             Bag
             {count > 0 && (
-              <span className="grid size-5 place-items-center rounded-full bg-sunny text-xs text-sunny-foreground">
+              <span
+                className={`grid size-5 place-items-center rounded-full bg-sunny text-xs text-sunny-foreground ${
+                  bagPulse ? "animate-badge-pop" : ""
+                }`}
+              >
                 {count}
               </span>
             )}

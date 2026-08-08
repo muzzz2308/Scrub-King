@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
-import { useCart } from "../lib/Cart";
+import { AddToBagButton } from "./AddToBagButton";
 import { useCatalog } from "../lib/Catalog";
 import { formatPkr, SINGLE_PRICE, getProductCardImage } from "../data/products";
 
 export function ProductCard({ product }) {
-  const { add } = useCart();
-  const { packsFor } = useCatalog();
-  const isKing = product.accent === "king";
+  const { packsFor } = useCatalog();  const isKing = product.accent === "king";
   const single = packsFor(product.slug).find((p) => p.pieces === 1);
 
   return (
@@ -43,13 +41,13 @@ export function ProductCard({ product }) {
         </p>
 
         <div className="mt-4 flex gap-2">
-          <button
-            onClick={() => single && add(single.id)}
+          <AddToBagButton
+            packId={single?.id}
+            disabled={!single}
             className="flex-1 press-pop rounded-full bg-foreground px-4 py-3 text-sm font-extrabold text-background shadow-pop transition-transform hover:-translate-y-0.5"
           >
             Add single
-          </button>
-          <Link
+          </AddToBagButton>          <Link
             to={`/shop/${product.slug}`}
             className="rounded-full press-pop border-4 border-ink px-4 py-3 text-sm font-extrabold text-foreground shadow-pop transition-colors hover:bg-secondary"
           >
