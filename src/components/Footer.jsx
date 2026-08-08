@@ -32,7 +32,7 @@ export default function Footer() {
         <div className="text-sm">
           <HappyPromiseTrigger />
           <p className="mt-3 text-muted-foreground">
-            Free shipping over PKR 1000 · makes cleaning fun · Ships in 24h
+            Free shipping on Family Pack of 6 · makes cleaning fun · Ships in 24h
           </p>
         </div>
       </div>

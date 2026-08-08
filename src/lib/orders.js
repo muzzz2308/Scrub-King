@@ -160,6 +160,7 @@ export async function upsertPack(pack) {
     contents: pack.contents,
     belongs_to: pack.belongsTo,
     badge: pack.badge ?? null,
+    image_url: pack.image || null,
   });
 
   if (error) throw new Error(error.message);

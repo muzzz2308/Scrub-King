@@ -7,7 +7,7 @@ export default function Marquee() {
             key={i}
             className="font-display text-lg font-extrabold tracking-wide text-background uppercase"
           >
-            Free shipping over PKR 1000 ✦ makes cleaning fun ✦ Ships in 24 hours
+            Free shipping on Family Pack of 6 ✦ makes cleaning fun ✦ Ships in 24 hours
             ✦
           </p>
         ))}

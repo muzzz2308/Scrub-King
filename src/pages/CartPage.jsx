@@ -2,12 +2,13 @@ import { Link } from "react-router-dom";
 import { useCart } from "../lib/Cart";
 import { useCatalog } from "../lib/Catalog";
 import { formatPkr } from "../data/products";
+import { getShipping } from "../lib/shipping";
 import { CartPageSkeleton } from "../components/skeleton/PageSkeletons";
 
 export default function CartPage() {
   const { items, total, setQty, remove } = useCart();
   const { getProduct, loading } = useCatalog();
-  const shipping = total >= 1000 || total === 0 ? 0 : 150;
+  const shipping = getShipping(items);
 
   if (loading && items.length > 0) {
     return <CartPageSkeleton />;
@@ -104,7 +105,7 @@ export default function CartPage() {
               Proceed to Checkout
             </Link>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-             Cash on delivery — pay the courier when your squad arrives. Free delivery over Rs 700.
+              Cash on delivery — pay when your squad arrives. Free delivery with Family Pack of 6.
             </p>
           </div>
         </>

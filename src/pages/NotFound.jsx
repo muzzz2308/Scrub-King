@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function NotFound() {
   return (
     <div className="relative mx-auto max-w-3xl px-5 py-20 text-center">
-      <div className="bg-confetti pointer-events-none absolute inset-0 opacity-50" />
+      <div className="bg-confetti pointer-events-none absolute inset-0 opacity-35" />
       <div className="pointer-events-none absolute -top-16 -right-10 size-40 rounded-full bg-sunny/40 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-12 -left-10 size-36 rounded-full bg-bubble/30 blur-3xl" />
 
@@ -16,7 +16,7 @@ export default function NotFound() {
 
         <p className="mt-6 font-display text-8xl font-extrabold leading-none text-ink sm:text-9xl">
           4
-          <span className="inline-block animate-bob bg-gradient-bubble bg-clip-text text-transparent">
+          <span className="inline-block animate-bob text-accent">
             0
           </span>
           4

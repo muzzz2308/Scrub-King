@@ -13,7 +13,8 @@ export const PACK_CARD_IMAGES = {
 };
 
 export function getProductCardImage(product) {
-  return PRODUCT_CARD_IMAGES[product.slug] ?? product.image;
+  if (product.image) return product.image;
+  return PRODUCT_CARD_IMAGES[product.slug];
 }
 
 export function getPackCardImage(pack) {
@@ -25,8 +26,8 @@ export const STATIC_PRODUCTS = [
     slug: "scrub-king",
     name: "Scrub King",
     tagline: "Dual-Texture Scrubber",
-    price: 199,
-    compareAt: 249,
+    price: 250,
+    compareAt: 299,
     image: king,
     accent: "king",
     blurb:
@@ -45,8 +46,8 @@ export const STATIC_PRODUCTS = [
     slug: "scrub-queen",
     name: "Scrub Queen",
     tagline: "Dual-Sided Scrubber + Sponge",
-    price: 199,
-    compareAt: 249,
+    price: 250,
+    compareAt: 299,
     image: queen,
     accent: "queen",
     blurb:
@@ -68,7 +69,7 @@ export const STATIC_PACKS = [
     id: "king-1",
     name: "Scrub King · Single",
     subtitle: "1 × Scrub King",
-    price: 199,
+    price: 250,
     pieces: 1,
     contents: ["scrub-king"],
     belongsTo: "scrub-king",
@@ -77,7 +78,7 @@ export const STATIC_PACKS = [
     id: "queen-1",
     name: "Scrub Queen · Single",
     subtitle: "1 × Scrub Queen",
-    price: 199,
+    price: 250,
     pieces: 1,
     contents: ["scrub-queen"],
     belongsTo: "scrub-queen",
@@ -86,7 +87,7 @@ export const STATIC_PACKS = [
     id: "duo",
     name: "The Duo",
     subtitle: "1 × King + 1 × Queen",
-    price: 375,
+    price: 450,
     pieces: 2,
     contents: ["scrub-king", "scrub-queen"],
     belongsTo: "mix",
@@ -97,7 +98,7 @@ export const STATIC_PACKS = [
     id: "family-4",
     name: "Family Pack of 4",
     subtitle: "2 × King + 2 × Queen",
-    price: 719,
+    price: 899,
     pieces: 4,
     contents: ["scrub-king", "scrub-queen", "scrub-king", "scrub-queen"],
     belongsTo: "mix",
@@ -105,10 +106,29 @@ export const STATIC_PACKS = [
     image: pack4,
   },
   {
+    id: "family-6",
+    name: "Family Pack of 6",
+    subtitle: "3 × King + 3 × Queen",
+    price: 1299,
+    compareAt: 1499,
+    pieces: 6,
+    contents: [
+      "scrub-king",
+      "scrub-queen",
+      "scrub-king",
+      "scrub-queen",
+      "scrub-king",
+      "scrub-queen",
+    ],
+    belongsTo: "mix",
+    badge: "Best value",
+    image: Squad,
+  },
+  {
     id: "king-3",
     name: "Pack of 3 · Scrub King",
     subtitle: "3 × Scrub King",
-    price: 549,
+    price: 699,
     pieces: 3,
     contents: ["scrub-king"],
     belongsTo: "scrub-king",
@@ -118,7 +138,7 @@ export const STATIC_PACKS = [
     id: "queen-3",
     name: "Pack of 3 · Scrub Queen",
     subtitle: "3 × Scrub Queen",
-    price: 549,
+    price: 699,
     pieces: 3,
     contents: ["scrub-queen"],
     belongsTo: "scrub-queen",
@@ -128,7 +148,7 @@ export const STATIC_PACKS = [
     id: "king-5",
     name: "Pack of 5 · Scrub King",
     subtitle: "5 × Scrub King",
-    price: 899,
+    price: 1149,
     pieces: 5,
     contents: ["scrub-king"],
     belongsTo: "scrub-king",
@@ -138,7 +158,7 @@ export const STATIC_PACKS = [
     id: "queen-5",
     name: "Pack of 5 · Scrub Queen",
     subtitle: "5 × Scrub Queen",
-    price: 899,
+    price: 1149,
     pieces: 5,
     contents: ["scrub-queen"],
     belongsTo: "scrub-queen",
@@ -149,14 +169,17 @@ export const STATIC_PACKS = [
 export const products = STATIC_PRODUCTS;
 export const packs = STATIC_PACKS;
 
-export const SINGLE_PRICE = 199;
+export const SINGLE_PRICE = 250;
 
 export const formatPkr = (n) =>
   `Rs ${n.toLocaleString("en-PK", { maximumFractionDigits: 0 })}`;
 
 export const perPiece = (pack) => pack.price / pack.pieces;
 
-export const savings = (pack) => pack.pieces * SINGLE_PRICE - pack.price;
+export const savings = (pack) => {
+  if (pack.compareAt != null) return pack.compareAt - pack.price;
+  return pack.pieces * SINGLE_PRICE - pack.price;
+};
 
 export function getProduct(slug, catalog = STATIC_PRODUCTS) {
   return catalog.find((p) => p.slug === slug);

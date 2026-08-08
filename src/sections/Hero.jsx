@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Hero() {
   return (
     <section className="relative mx-auto max-w-6xl px-5 pt-14 pb-20">
-      <div className="bg-confetti pointer-events-none absolute inset-0 opacity-60" />
+      <div className="bg-confetti pointer-events-none absolute inset-0 opacity-35" />
       <div className="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-sunny/50 blur-3xl" />
       <div className="pointer-events-none absolute top-40 -left-28 size-72 rounded-full bg-bubble/30 blur-3xl" />
 
@@ -15,7 +15,7 @@ export default function Hero() {
           </span>
           <h1 className="mt-5 font-display text-3xl leading-none font-extrabold text-ink sm:text-6xl">
             Meet Your Kitchen's
-            <span className="block bg-gradient-bubble bg-clip-text text-transparent">
+            <span className="block text-accent">
               New Favorite Cleaning Duo
             </span>
           </h1>
@@ -27,7 +27,7 @@ export default function Hero() {
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/shop"
-              className="press-pop rounded-full border-4 border-ink bg-gradient-sun px-7 py-4 font-display text-lg font-extrabold text-ink shadow-pop"
+              className="press-pop rounded-full border-4 border-ink bg-sunny px-7 py-4 font-display text-lg font-extrabold text-ink shadow-pop"
             >
                Scrub Shop
             </Link>

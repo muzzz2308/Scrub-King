@@ -29,25 +29,50 @@ function normalizePack(row) {
     contents: row.contents ?? [],
     belongsTo: row.belongs_to,
     badge: row.badge ?? undefined,
+    image: row.image_url ?? undefined,
   };
 }
 
 function mergeProducts(staticProducts, dbRows) {
   const dbBySlug = new Map((dbRows ?? []).map((row) => [row.slug, normalizeProduct(row)]));
+  const staticSlugs = new Set(staticProducts.map((product) => product.slug));
 
-  return staticProducts.map((product) => ({
+  const merged = staticProducts.map((product) => ({
     ...product,
     ...(dbBySlug.get(product.slug) ?? {}),
   }));
+
+  for (const row of dbRows ?? []) {
+    if (!staticSlugs.has(row.slug)) {
+      merged.push(normalizeProduct(row));
+    }
+  }
+
+  return merged.sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 function mergePacks(staticPacks, dbRows) {
   const dbById = new Map((dbRows ?? []).map((row) => [row.id, normalizePack(row)]));
+  const staticIds = new Set(staticPacks.map((pack) => pack.id));
 
-  return staticPacks.map((pack) => ({
-    ...pack,
-    ...(dbById.get(pack.id) ?? {}),
-  }));
+  const merged = staticPacks.map((pack) => {
+    const db = dbById.get(pack.id);
+    if (!db) return pack;
+
+    return {
+      ...pack,
+      ...db,
+      image: db.image ?? pack.image,
+    };
+  });
+
+  for (const row of dbRows ?? []) {
+    if (!staticIds.has(row.id)) {
+      merged.push(normalizePack(row));
+    }
+  }
+
+  return merged.sort((a, b) => a.price - b.price);
 }
 
 async function fetchCatalog() {
@@ -108,13 +133,13 @@ export function CatalogProvider({ children }) {
       getProduct: (slug) => products.find((p) => p.slug === slug),
       getPack: (id) => packs.find((p) => p.id === id),
       packsFor: (slug) => packs.filter((p) => p.belongsTo === slug),
-      refresh: async () => {
-        setLoading(true);
+      refresh: async ({ silent = false } = {}) => {
+        if (!silent) setLoading(true);
         const catalog = await fetchCatalog();
         setProducts(catalog.products);
         setPacks(catalog.packs);
         setFromDb(catalog.fromDb);
-        setLoading(false);
+        if (!silent) setLoading(false);
       },
     }),
     [products, packs, loading, fromDb],

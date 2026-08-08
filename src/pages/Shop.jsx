@@ -1,4 +1,4 @@
-import { formatPkr } from "../data/products";
+import { formatPkr, SINGLE_PRICE } from "../data/products";
 import { useCatalog } from "../lib/Catalog";
 import { ProductCard } from "../components/ProductCard";
 import { PackCard } from "../components/PackCard";
@@ -16,7 +16,7 @@ export default function Shop() {
         The Shop
       </h1>
       <p className="mt-3 max-w-lg text-muted-foreground">
-        Two heroes, no filler. Singles start at {formatPkr(199)} — bundle up and the price per scrub
+        Two heroes, no filler. Singles start at {formatPkr(SINGLE_PRICE)} — bundle up and the price per scrub
         drops fast.
       </p>
       <div className="mt-10 grid gap-7 sm:grid-cols-2">

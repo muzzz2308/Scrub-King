@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../lib/Cart";
 import { useCatalog } from "../lib/Catalog";
 import { createOrder } from "../lib/orders";
+import { getShipping } from "../lib/shipping";
 import { formatPkr } from "../data/products";
 import { CheckoutPageSkeleton } from "../components/skeleton/PageSkeletons";
 
@@ -20,16 +21,24 @@ export default function CheckoutPage() {
   const { items, total, clear } = useCart();
   const { getProduct, loading: catalogLoading } = useCatalog();
   const navigate = useNavigate();
+  const successRef = useRef(null);
 
   const [form, setForm] = useState(empty);
   const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState("");
   const [placed, setPlaced] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  const shipping = total >= 1000 || total === 0 ? 0 : 150;
-  const codFee = total === 0 ? 0 : 50;
-  const grand = total + shipping + codFee;
+  const shipping = getShipping(items);
+  const grand = total + shipping;
+
+  useEffect(() => {
+    if (placed) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      successRef.current?.focus();
+    }
+  }, [placed]);
 
   function set(key, value) {
     setForm((prev) => ({
@@ -41,6 +50,7 @@ export default function CheckoutPage() {
       ...prev,
       [key]: undefined,
     }));
+    setFormError("");
   }
 
   async function submit(e) {
@@ -49,23 +59,25 @@ export default function CheckoutPage() {
     const next = {};
 
     if (form.name.trim().length < 2)
-      next.name = "Tell us who to hand the box to";
+      next.name = "Full name is required";
 
     if (form.phone.replace(/\D/g, "").length < 7)
-      next.phone = "We need a reachable number";
+      next.phone = "Phone number is required";
 
     if (form.address.trim().length < 5)
-      next.address = "Street, building, apartment…";
+      next.address = "Address is required";
 
     if (form.city.trim().length < 2) next.city = "City is required";
 
     if (Object.keys(next).length) {
       setErrors(next);
+      setFormError("Please fill in all required fields.");
       return;
     }
 
     setSubmitting(true);
     setSubmitError("");
+    setFormError("");
 
     try {
       const result = await createOrder({
@@ -73,7 +85,7 @@ export default function CheckoutPage() {
         items,
         subtotal: total,
         shipping,
-        codFee,
+        codFee: 0,
         total: grand,
       });
 
@@ -93,7 +105,7 @@ export default function CheckoutPage() {
 
   if (placed) {
     return (
-      <div className="mx-auto max-w-2xl px-5 py-20 text-center">
+      <div ref={successRef} tabIndex={-1} className="mx-auto max-w-2xl px-5 py-20 text-center outline-none">
         <div className="rounded-4xl border-4 border-ink bg-card p-10 shadow-pop">
           <div className="mx-auto flex size-20 items-center border-4 border-ink animate-bob justify-center rounded-full bg-gradient-sun text-4xl shadow-pop-sm">
             🎉
@@ -161,7 +173,7 @@ export default function CheckoutPage() {
         Checkout
       </h1>
       <p className="mt-2 font-semibold text-muted-foreground">
-        Cash on delivery — pay the courier when your courier arrives.
+        Cash on delivery — pay the courier when your order arrives.
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
@@ -179,12 +191,14 @@ export default function CheckoutPage() {
               value={form.name}
               onChange={(v) => set("name", v)}
               error={errors.name}
+              required
             />
             <Field
               label="Phone"
               value={form.phone}
               onChange={(v) => set("phone", v)}
               error={errors.phone}
+              required
             />
             <div className="sm:col-span-2">
               <Field
@@ -199,6 +213,7 @@ export default function CheckoutPage() {
                 value={form.address}
                 onChange={(v) => set("address", v)}
                 error={errors.address}
+                required
               />
             </div>
             <Field
@@ -206,6 +221,7 @@ export default function CheckoutPage() {
               value={form.city}
               onChange={(v) => set("city", v)}
               error={errors.city}
+              required
             />
             <Field
               label="ZIP / Postal code"
@@ -223,13 +239,18 @@ export default function CheckoutPage() {
 
           <div className="mt-6 rounded-3xl border-4 border-ink bg-secondary p-5">
             <p className="font-display text-lg font-extrabold text-ink">
-              💵 Cash on delivery
+              Cash on delivery
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              The only payment method for now. Hand the exact amount to the
-              courier — a {formatPkr(codFee)} handling fee applies.
+              Pay the exact order total in cash when the courier arrives.
             </p>
           </div>
+
+          {formError ? (
+            <p className="mt-6 rounded-2xl border-4 border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-bold text-destructive">
+              {formError}
+            </p>
+          ) : null}
 
           <button
             type="submit"
@@ -296,12 +317,16 @@ export default function CheckoutPage() {
               label="Shipping"
               value={shipping === 0 ? "Free" : formatPkr(shipping)}
             />
-            <Row label="Cash handling" value={formatPkr(codFee)} />
           </div>
           <div className="mt-4 flex justify-between font-display text-2xl font-extrabold text-ink">
             <span>Pay on delivery</span>
             <span>{formatPkr(grand)}</span>
           </div>
+          {shipping > 0 ? (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Add a Family Pack of 6 for free delivery.
+            </p>
+          ) : null}
         </aside>
       </div>
     </div>
@@ -317,15 +342,20 @@ function Row({ label, value }) {
   );
 }
 
-function Field({ label, value, onChange, error }) {
+function Field({ label, value, onChange, error, required = false }) {
   return (
     <label className="block">
-      <span className="text-sm font-bold text-ink">{label}</span>
+      <span className="text-sm font-bold text-ink">
+        {label}
+        {required ? <span className="text-destructive"> *</span> : null}
+      </span>
 
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-2xl border-4 border-ink/10 bg-background px-4 py-3 font-semibold text-foreground outline-none focus:border-primary"
+        className={`mt-1 w-full rounded-2xl border-4 bg-background px-4 py-3 font-semibold text-foreground outline-none focus:border-primary ${
+          error ? "border-destructive" : "border-ink/10"
+        }`}
       />
 
       {error ? (

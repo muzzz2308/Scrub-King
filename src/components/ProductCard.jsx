@@ -6,6 +6,7 @@ import { formatPkr, SINGLE_PRICE, getProductCardImage } from "../data/products";
 export function ProductCard({ product }) {
   const { packsFor } = useCatalog();  const isKing = product.accent === "king";
   const single = packsFor(product.slug).find((p) => p.pieces === 1);
+  const packOf5 = packsFor(product.slug).find((p) => p.pieces === 5);
 
   return (
     <article
@@ -31,13 +32,13 @@ export function ProductCard({ product }) {
             {product.name}
           </h3>
           <p className="font-display text-xl font-extrabold text-primary">
-            {formatPkr(SINGLE_PRICE)}
+            {formatPkr(product.price ?? SINGLE_PRICE)}
             <span className="ml-1 text-xs font-bold text-muted-foreground">/ piece</span>
           </p>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">{product.blurb}</p>
         <p className="mt-2 text-xs font-extrabold tracking-wide text-ink uppercase">
-          Packs of 5 from {formatPkr(899)}
+          Packs of 5 from {formatPkr(packOf5?.price ?? 1149)}
         </p>
 
         <div className="mt-4 flex gap-2">

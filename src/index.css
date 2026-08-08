@@ -1,21 +1,33 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    color-scheme: light only;
+    background-color: rgb(238, 232, 214);
+  }
+
   body {
     font-family: var(--font-sans);
-    background-color: var(--background);
-    color: var(--foreground);
+    color-scheme: light only;
+    background-color: rgb(238, 232, 214);
+    color: rgb(22, 34, 68);
 
     background-image:
       radial-gradient(
-        rgba(39, 54, 95, 0.07) 2px,
+        rgb(225, 220, 205) 2px,
         transparent 2px
       ),
-      var(--gradient-sky);
+      linear-gradient(180deg, rgb(232, 225, 205), rgb(240, 234, 220));
 
     background-size:
       24px 24px,
       auto;
+  }
+
+  #root {
+    min-height: 100%;
+    background-color: rgb(238, 232, 214);
+    color: rgb(22, 34, 68);
   }
 }
 
@@ -214,7 +226,7 @@
 
 @utility bg-dots {
   background-image: radial-gradient(
-    rgba(22, 34, 68, 0.18) 2px,
+    rgb(225, 220, 205) 2px,
     transparent 2px
   );
 
@@ -225,22 +237,22 @@
   background-image:
     radial-gradient(
       circle at 12% 22%,
-      rgba(212, 55, 122, 0.60) 6px,
+      rgb(230, 180, 200) 6px,
       transparent 7px
     ),
     radial-gradient(
       circle at 78% 12%,
-      rgba(238, 201, 63, 0.75) 8px,
+      rgb(240, 220, 160) 8px,
       transparent 9px
     ),
     radial-gradient(
       circle at 62% 78%,
-      rgba(56, 146, 214, 0.55) 5px,
+      rgb(180, 210, 235) 5px,
       transparent 6px
     ),
     radial-gradient(
       circle at 30% 88%,
-      rgba(222, 143, 33, 0.55) 7px,
+      rgb(235, 200, 150) 7px,
       transparent 8px
     );
 
@@ -316,6 +328,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
 
   --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
@@ -336,6 +349,7 @@
 }
 
 :root {
+  color-scheme: light only;
   --background: rgb(238, 232, 214);
   --foreground: rgb(22, 34, 68);
 
@@ -361,6 +375,7 @@
   --destructive-foreground: rgb(248, 249, 252);
 
   --border: rgb(198, 188, 162);
+  --border-subtle: rgb(210, 202, 182);
   --input: rgb(198, 188, 162);
   --ring: rgb(222, 143, 33);
 

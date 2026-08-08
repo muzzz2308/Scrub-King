@@ -7,7 +7,7 @@ export default function MainLayout() {
     <>
       <Navbar />
 
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-background text-foreground">
         <Outlet />
       </main>
 

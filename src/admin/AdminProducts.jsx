@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AdminSelect } from "../components/AdminSelect";
+import { AdminConfirmDialog } from "../components/AdminConfirmDialog";
 import { useCatalog } from "../lib/Catalog";
 import {
   deletePack,
@@ -14,8 +15,8 @@ const emptyProduct = {
   slug: "",
   name: "",
   tagline: "",
-  price: 199,
-  compareAt: 249,
+  price: 250,
+  compareAt: 299,
   image: "/Kingimg.webp",
   accent: "king",
   blurb: "",
@@ -27,19 +28,30 @@ const emptyPack = {
   id: "",
   name: "",
   subtitle: "",
-  price: 199,
+  price: 250,
   pieces: 1,
   contents: "scrub-king",
   belongsTo: "scrub-king",
   badge: "",
+  image: "",
 };
+
+function scrollToForm(ref) {
+  requestAnimationFrame(() => {
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
 
 export default function AdminProducts() {
   const { products, packs, refresh, loading } = useCatalog();
+  const productFormRef = useRef(null);
+  const packFormRef = useRef(null);
   const [productForm, setProductForm] = useState(emptyProduct);
   const [packForm, setPackForm] = useState(emptyPack);
+  const [activeForm, setActiveForm] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [confirmAction, setConfirmAction] = useState(null);
 
   if (loading) {
     return <AdminProductsSkeleton />;
@@ -60,7 +72,8 @@ export default function AdminProducts() {
       });
       setMessage("Product saved.");
       setProductForm(emptyProduct);
-      await refresh();
+      setActiveForm(null);
+      await refresh({ silent: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save product");
     }
@@ -80,53 +93,77 @@ export default function AdminProducts() {
           ? packForm.contents.split(",").map((s) => s.trim()).filter(Boolean)
           : packForm.contents,
         badge: packForm.badge || undefined,
+        image: packForm.image?.trim() || undefined,
       });
       setMessage("Pack saved.");
       setPackForm(emptyPack);
-      await refresh();
+      setActiveForm(null);
+      await refresh({ silent: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save pack");
     }
   }
 
   async function removeProduct(slug) {
-    if (!confirm(`Delete product ${slug}?`)) return;
-    setError("");
-    try {
-      await deleteProduct(slug);
-      setMessage("Product deleted.");
-      await refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete product");
-    }
+    setConfirmAction({ type: "product", id: slug, label: slug });
   }
 
   async function removePack(id) {
-    if (!confirm(`Delete pack ${id}?`)) return;
+    const pack = packs.find((p) => p.id === id);
+    setConfirmAction({ type: "pack", id, label: pack?.name ?? id });
+  }
+
+  async function handleConfirmDelete() {
+    if (!confirmAction) return;
+
+    const { type, id } = confirmAction;
+    setConfirmAction(null);
     setError("");
+
     try {
-      await deletePack(id);
-      setMessage("Pack deleted.");
-      await refresh();
+      if (type === "product") {
+        await deleteProduct(id);
+        setMessage("Product deleted.");
+      } else {
+        await deletePack(id);
+        setMessage("Pack deleted.");
+      }
+      setActiveForm(null);
+      await refresh({ silent: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete pack");
+      setError(
+        err instanceof Error
+          ? err.message
+          : `Failed to delete ${type === "product" ? "product" : "pack"}`,
+      );
     }
   }
 
   function editProduct(product) {
+    setError("");
     setProductForm({
       ...product,
-      perks: product.perks.length ? product.perks : [""],
-      specs: product.specs.length ? product.specs : [{ label: "", value: "" }],
+      image: typeof product.image === "string" ? product.image : String(product.image ?? ""),
+      compareAt: product.compareAt ?? "",
+      perks: product.perks?.length ? product.perks : [""],
+      specs: product.specs?.length ? product.specs : [{ label: "", value: "" }],
     });
+    setActiveForm("product");
+    setMessage(`Editing ${product.name}…`);
+    scrollToForm(productFormRef);
   }
 
   function editPack(pack) {
+    setError("");
     setPackForm({
       ...pack,
-      contents: pack.contents.join(", "),
+      contents: Array.isArray(pack.contents) ? pack.contents.join(", ") : pack.contents ?? "",
       badge: pack.badge ?? "",
+      image: typeof pack.image === "string" ? pack.image : "",
     });
+    setActiveForm("pack");
+    setMessage(`Editing ${pack.name}…`);
+    scrollToForm(packFormRef);
   }
 
   return (
@@ -139,8 +176,11 @@ export default function AdminProducts() {
 
       <section className="grid gap-8 lg:grid-cols-2">
         <form
+          ref={productFormRef}
           onSubmit={saveProduct}
-          className="rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6"
+          className={`scroll-mt-6 rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6 ${
+            activeForm === "product" ? "ring-4 ring-primary" : ""
+          }`}
         >
           <h2 className="font-display text-2xl font-extrabold text-ink">
             {productForm.slug ? "Edit product" : "Add product"}
@@ -179,8 +219,11 @@ export default function AdminProducts() {
         </form>
 
         <form
+          ref={packFormRef}
           onSubmit={savePack}
-          className="rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6"
+          className={`scroll-mt-6 rounded-4xl border-4 border-ink bg-card p-4 shadow-pop sm:p-6 ${
+            activeForm === "pack" ? "ring-4 ring-primary" : ""
+          }`}
         >
           <h2 className="font-display text-2xl font-extrabold text-ink">
             {packForm.id ? "Edit pack" : "Add pack"}
@@ -194,6 +237,18 @@ export default function AdminProducts() {
             <Field label="Contents (slugs, comma separated)" value={packForm.contents} onChange={(v) => setPackForm((p) => ({ ...p, contents: v }))} />
             <Field label="Belongs to" value={packForm.belongsTo} onChange={(v) => setPackForm((p) => ({ ...p, belongsTo: v }))} />
             <Field label="Badge" value={packForm.badge} onChange={(v) => setPackForm((p) => ({ ...p, badge: v }))} />
+            {packForm.belongsTo === "mix" ? (
+              <Field
+                label="Pack image URL"
+                value={packForm.image}
+                onChange={(v) => setPackForm((p) => ({ ...p, image: v }))}
+              />
+            ) : null}
+            {packForm.belongsTo === "mix" ? (
+              <p className="text-xs text-muted-foreground">
+                Shown on shop bundle cards. Use a path like /pack4.webp or a full image URL.
+              </p>
+            ) : null}
           </div>
           <button type="submit" className="press-pop mt-5 w-full rounded-full border-4 border-ink bg-gradient-bubble px-6 py-3 text-center font-display font-extrabold text-accent-foreground shadow-pop sm:w-auto">
             Save pack
@@ -239,6 +294,20 @@ export default function AdminProducts() {
           </ul>
         </div>
       </section>
+
+      <AdminConfirmDialog
+        open={Boolean(confirmAction)}
+        title={confirmAction?.type === "product" ? "Delete product?" : "Delete pack?"}
+        description={
+          confirmAction
+            ? `"${confirmAction.label}" will be permanently removed from the catalog. This cannot be undone.`
+            : ""
+        }
+        confirmLabel="Delete"
+        destructive
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 }
@@ -249,7 +318,7 @@ function Field({ label, value, onChange, type = "text" }) {
       {label}
       <input
         type={type}
-        value={value}
+        value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
         className="mt-1 w-full rounded-2xl border-4 border-ink/10 bg-background px-4 py-3 font-semibold outline-none focus:border-primary"
       />
