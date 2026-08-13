@@ -144,7 +144,7 @@ export default function ProductDetails() {
               disabled={!pack}
               className="press-pop rounded-full border-4 border-ink bg-foreground px-8 py-4 font-display text-lg font-extrabold text-background shadow-pop"
             >
-              Add to Bag · {pack ? formatPkr(pack.price) : ""}
+              Add to Bag 
             </AddToBagButton>
 
             <Link
